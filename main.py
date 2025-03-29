@@ -1,55 +1,26 @@
 import requests
-import schedule
+import os
 import time
 
-TOKEN = "7891757524:AAEfhDFqlwbuB4Uj414x9bWTjsnsTqfyBWA"  # Ganti dengan token bot Anda
-CHAT_ID = "-1002641914103"  # Ganti dengan chat ID supergroup Anda
+# Mengambil token & chat ID dari Railway Environment Variables
+TOKEN = os.getenv("TOKEN")
+CHAT_ID = os.getenv("CHAT_ID")
 
-def send_message(message):
-    url = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
-    data = {
-        "chat_id": CHAT_ID,
-        "text": message,
-        "parse_mode": "MarkdownV2"
-    }
-    response = requests.post(url, data=data)
+# URL API Telegram
+URL = f"https://api.telegram.org/bot{TOKEN}/sendMessage"
+
+# Fungsi untuk mengirim pesan
+def send_message():
+    MESSAGE = "🚀 Bot Telegram Railway Aktif!"
+    data = {"chat_id": CHAT_ID, "text": MESSAGE}
+    response = requests.post(URL, data=data)
 
     if response.status_code == 200:
-        print("Pesan berhasil dikirim!")
+        print("✅ Pesan berhasil dikirim!")
     else:
-        print("Gagal mengirim pesan:", response.text)
+        print("❌ Gagal mengirim pesan:", response.text)
 
-def send_absen_pagi():
-    message = """🔔 *PESAN PENGINGAT* 🔔
-
-Jangan lupa untuk *absen pagi* rekan\\-rekan taruna  
-Waktu : *06\\.00 \\- 10\\.00 WIB*  
-Link absensi : [Klik di sini](https://157.66.34.25:5173/absen)
-
-Terima kasih rekan\\-rekan taruna 🫡  
-Enjoy your holiday ✨
-"""
-    send_message(message)
-
-def send_absen_malam():
-    message = """🔔 *PESAN PENGINGAT* 🔔
-
-Jangan lupa untuk *absen malam* rekan\\-rekan taruna  
-Waktu : *18\\.00 \\- 22\\.00 WIB*  
-Link absensi : [Klik di sini](https://157.66.34.25:5173/absen)
-
-Terima kasih rekan\\-rekan taruna 🫡  
-Enjoy your holiday ✨
-"""
-    send_message(message)
-
-# Jadwal pengiriman pesan (Waktu GMT+7 Jakarta)
-schedule.every().day.at("06:00").do(send_absen_pagi)  # Absen pagi
-schedule.every().day.at("18:00").do(send_absen_malam)  # Absen malam
-
-print("Bot Telegram berjalan...")
-
-# Loop agar script berjalan terus
+# Mengirim pesan setiap 1 menit (jika ingin terus berjalan)
 while True:
-    schedule.run_pending()
-    time.sleep(60)  # Cek setiap 60 detik
+    send_message()
+    time.sleep(60)  # Tunggu 60 detik sebelum mengirim ulang
